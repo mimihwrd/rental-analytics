@@ -1,0 +1,34 @@
+Top 5 customers based within each country 
+
+SELECT DISTINCT (A.country), 
+        COUNT (DISTINCT D.customer_id) AS all_customer_count, 
+        COUNT (DISTINCT A.country) AS top_customer_count
+FROM country A
+INNER JOIN city B ON A.country_id=B.country_id
+INNER JOIN address C ON B.city_id=city_id
+INNER JOIN customer D ON C.address_id=D.address_id
+LEFT JOIN
+(SELECT A.customer_id, 
+        A.first_name,
+        A.last_name,
+        C.city, 
+        D.country, 
+SUM(E.amount)
+AS total_rentals_paid
+FROM customer A
+INNER JOIN address B ON A.address_id=B.address_id
+INNER JOIN city C ON B.city_id=C.city_id
+INNER JOIN country D ON C.country_id=D.country_id
+INER JOIN payment E ON A.customer_id=E.customer_id
+WHERE D.country IN 
+  ('India','China','United States','Mexico','Japan','Brazil','Russia','Phillippines','Indonesia','Turkey')
+  AND C.city IN
+  ('Aurora','Atlixco','Xintai','Adoni','Dhule (Dhulia)', 'Kurashiki','Pingxiang','Sivas','Celaya','So Leopoldo')
+ GROUP BY A.customer_id, C.city, D.country
+ ODER BY total_rentals_paid DESC
+ LIMIT 5) AS top_5_customers
+ ON A.country=top_5_customers.COUNTRY
+ ORDER BY all_customer_count DESC
+ LIMIT 5; 
+
+
